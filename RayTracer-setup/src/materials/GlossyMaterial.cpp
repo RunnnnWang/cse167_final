@@ -19,6 +19,9 @@ Ray GlossyMaterial::sample_ray_and_update_radiance(Ray &ray, Intersection &inter
     vec3 normal = intersection.normal;
     vec3 point = intersection.point;
 
+    // std::cout << "Current shininess: " << shininess << std::endl;
+    // std::cout << "random: " << random << std::endl;
+
     // Diffuse reflection
     if (random > shininess) {
         // Step 1: Sample ray direction
@@ -73,7 +76,10 @@ Ray GlossyMaterial::sample_ray_and_update_radiance(Ray &ray, Intersection &inter
      * TODO: Task 6.2
      * Calculate the perfect mirror reflection direction
      */
-    vec3 reflection_dir = vec3(0.0f);  // TODO: Update with reflection direction
+    // vec3 reflection_dir = vec3(0.0f);  // TODO: Update with reflection direction
+    vec3 reflection_dir = 2*glm::dot(normal,-ray.dir)*normal+ray.dir;
+
+
 
     // Step 2: Calculate radiance
     /**
@@ -81,7 +87,8 @@ Ray GlossyMaterial::sample_ray_and_update_radiance(Ray &ray, Intersection &inter
      * Note:
      * - C_specular = `this->specular`
      */
-    vec3 W_specular = vec3(0.0f);  // TODO: Calculate the radiance for current bounce
+    // vec3 W_specular = vec3(0.0f);  // TODO: Calculate the radiance for current bounce
+    vec3 W_specular = this->specular;
 
     // update radiance
     ray.W_wip = ray.W_wip * W_specular;
