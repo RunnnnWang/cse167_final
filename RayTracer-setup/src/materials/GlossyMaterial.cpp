@@ -121,6 +121,8 @@ Ray GlossyMaterial::sample_ray_and_update_radiance(Ray &ray, Intersection &inter
     // vec3 reflection_dir = vec3(0.0f);  // TODO: Update with reflection direction
     vec3 reflection_dir = 2*glm::dot(normal,-ray.dir)*normal+ray.dir;
 
+    float cos_theta = glm::dot(normal, -ray.dir);
+
     glm::vec3 reflected_color = the_cubemap(reflection_dir);
 
     // Step 2: Calculate radiance
@@ -130,9 +132,16 @@ Ray GlossyMaterial::sample_ray_and_update_radiance(Ray &ray, Intersection &inter
      * - C_specular = `this->specular`
      */
     // vec3 W_specular = vec3(0.0f);  // TODO: Calculate the radiance for current bounce
+
+    // float refractness = 0.2f; 
+    // float eta = (cos_theta > 0.0f) ? 1.0f / refractness : refractness;
+    // glm::vec3 refracted_dir = refract(ray.dir, normal, eta);
+
     vec3 W_specular = this->specular;    //task 6.2
-    // vec3 W_specular = this->specular * glm::max(glm::dot(normal, reflection_dir), 0.0f);
-    W_specular *= reflected_color;  
+    // // vec3 W_specular = this->specular * glm::max(glm::dot(normal, reflection_dir), 0.0f);
+    W_specular *= reflected_color;  //cubemap
+
+    // ray.W_wip = ray.W_wip * (reflected_color + W_specular * reflected_color);
 
 
     // update radiance
