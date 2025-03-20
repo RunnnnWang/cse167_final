@@ -2,6 +2,7 @@
 #include <stack>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/random.hpp>
 
 #include "ModelBase.h"
 #include "Ray.h"
@@ -99,6 +100,19 @@ Ray Scene::intersect(Ray &ray) const {
 
             ray.isWip = false;  // no further processing
             return ray;
+        }
+
+        float  prob = 0.5f;
+        if (ray.n_bounces > 0) {
+            float c = linearRand(0.0f, 1.0f);
+            if (c < prob) {
+                ray.color = vec3(0.0f);
+                ray.isWip = false;
+                return ray;
+            } 
+            else {
+                ray.W_wip *= 1.0f / (1.0f - prob);
+            }
         }
 
         // update color for nth last bounce
