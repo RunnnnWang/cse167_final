@@ -8,6 +8,48 @@
 
 using namespace glm;
 
+struct Cubemap {
+    glm::vec3 pos_x, neg_x, pos_y, neg_y, pos_z, neg_z;
+
+    Cubemap() {
+        pos_x = glm::vec3(1.0f, 0.0f, 0.0f);  
+        neg_x = glm::vec3(0.0f, 1.0f, 0.0f); 
+        pos_y = glm::vec3(0.0f, 0.0f, 1.0f);  
+        neg_y = glm::vec3(1.0f, 1.0f, 0.0f);  
+        pos_z = glm::vec3(0.0f, 1.0f, 1.0f);  
+        neg_z = glm::vec3(1.0f, 0.0f, 1.0f);  
+    }
+
+    glm::vec3 sample(glm::vec3 dir) {
+        dir = glm::normalize(dir);
+
+        if (abs(dir.x) > abs(dir.y) && abs(dir.x) > abs(dir.z)) {
+            if (dir.x > 0.0f) {
+                return pos_x;
+            } else {
+                return neg_x;
+            }
+        } else if (abs(dir.y) > abs(dir.x) && abs(dir.y) > abs(dir.z)) {
+            if (dir.y > 0.0f) {
+                return pos_y;
+            } else {
+                return neg_y;
+            }
+        } else {
+            if (dir.z > 0.0f) {
+                return pos_z;
+            } else {
+                return neg_z;
+            }
+        }
+    }
+};
+
+glm::vec3 the_cubemap(glm::vec3 reflection_dir) {
+    static Cubemap cubemap;  
+    return cubemap.sample(reflection_dir);  
+}
+
 Ray GlossyMaterial::sample_ray_and_update_radiance(Ray &ray, Intersection &intersection) {
     /**
      * Calculate the next ray after intersection with the model.
@@ -79,7 +121,7 @@ Ray GlossyMaterial::sample_ray_and_update_radiance(Ray &ray, Intersection &inter
     // vec3 reflection_dir = vec3(0.0f);  // TODO: Update with reflection direction
     vec3 reflection_dir = 2*glm::dot(normal,-ray.dir)*normal+ray.dir;
 
-
+    glm::vec3 reflected_color = the_cubemap(reflection_dir);
 
     // Step 2: Calculate radiance
     /**
@@ -88,7 +130,10 @@ Ray GlossyMaterial::sample_ray_and_update_radiance(Ray &ray, Intersection &inter
      * - C_specular = `this->specular`
      */
     // vec3 W_specular = vec3(0.0f);  // TODO: Calculate the radiance for current bounce
-    vec3 W_specular = this->specular;
+    vec3 W_specular = this->specular;    //task 6.2
+    // vec3 W_specular = this->specular * glm::max(glm::dot(normal, reflection_dir), 0.0f);
+    W_specular *= reflected_color;  
+
 
     // update radiance
     ray.W_wip = ray.W_wip * W_specular;
