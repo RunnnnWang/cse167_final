@@ -26,12 +26,18 @@
 #include "./scenes/open_sky.inl"
 #include "./scenes/sphere_in_box.inl"
 #include "./scenes/teapot_in_box.inl"
+#include "./scenes/abstract_sculpture.inl"
+#include "./scenes/geomatric_art.inl"
+#include "./scenes/geometric_tower.inl"
+#include "./scenes/mirror_room_with_tower.inl"
+
 #include "Image.h"
 #include "ProgressBar.h"
 #include "Ray.h"
 #include "RayTracer.h"
 #include "Scene.h"
 #include "Sphere.h"
+#include "./scenes/mirror_room.inl"
 
 using namespace glm;
 
@@ -43,6 +49,13 @@ void RayTracer::init(int scene_id) {
         scene = std::unique_ptr<Scene>(teapot_in_box());
     else if (scene_id == 3)
         scene = std::unique_ptr<Scene>(open_sky());
+    else if(scene_id == 4)
+        scene = std::unique_ptr<Scene> (mirror_room());
+    else if(scene_id == 5)
+        scene = std::unique_ptr<Scene> (geometric_tower());
+    else if(scene_id == 6)
+        scene = std::unique_ptr<Scene> (mirror_room_with_tower());
+
     else {
         std::cout << "Invalid <scene_id> " << scene_id << " given" << std::endl;
         exit(1);
